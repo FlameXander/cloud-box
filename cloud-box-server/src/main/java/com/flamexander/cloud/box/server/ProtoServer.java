@@ -9,7 +9,14 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 public class ProtoServer {
+    public static final String SERVER_STORAGE_PATH = "server_repository";
+
     public void run() throws Exception {
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -32,6 +39,14 @@ public class ProtoServer {
     }
 
     public static void main(String[] args) throws Exception {
+        init();
         new ProtoServer().run();
+    }
+
+    public static void init() throws IOException {
+        Path serverStoragePath = Paths.get(SERVER_STORAGE_PATH);
+        if (!Files.exists(serverStoragePath)) {
+            Files.createDirectory(serverStoragePath);
+        }
     }
 }

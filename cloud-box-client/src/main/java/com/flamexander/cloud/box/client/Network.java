@@ -29,13 +29,13 @@ public class Network {
         return currentChannel;
     }
 
-    public void start(CountDownLatch connectionOpened) {
+    public void start(CountDownLatch connectionOpened, String hostname, int port) {
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap clientBootstrap = new Bootstrap();
             clientBootstrap.group(group)
                     .channel(NioSocketChannel.class)
-                    .remoteAddress(new InetSocketAddress("localhost", 8189))
+                    .remoteAddress(new InetSocketAddress(hostname, port))
                     .handler(new ChannelInitializer<SocketChannel>() {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new ProtoHandler("client_storage", new ClientCommandReceiver()));

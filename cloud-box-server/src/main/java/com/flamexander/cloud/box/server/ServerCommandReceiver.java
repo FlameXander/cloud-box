@@ -11,7 +11,7 @@ public class ServerCommandReceiver extends CommandReceiver {
     public void parseCommand(ChannelHandlerContext ctx, String cmd) throws Exception {
         if(cmd.startsWith("/request ")) {
             String fileToClientName = cmd.split("\\s")[1];
-            ProtoFileSender.sendFile(Paths.get("server_repository", fileToClientName), ctx.channel(), null);
+            ProtoFileSender.sendFile(Paths.get(ProtoServer.SERVER_STORAGE_PATH, fileToClientName), ctx.channel(), null);
         }
     }
 }

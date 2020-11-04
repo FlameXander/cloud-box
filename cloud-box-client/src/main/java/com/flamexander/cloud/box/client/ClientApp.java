@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,9 +15,19 @@ import java.util.Scanner;
 import java.util.concurrent.CountDownLatch;
 
 public class ClientApp {
+    public static final String CLIENT_STORAGE_PATH = "client_repository";
+
+    public static void init() throws IOException {
+        Path clientStoragePath = Paths.get(CLIENT_STORAGE_PATH);
+        if (!Files.exists(clientStoragePath)) {
+            Files.createDirectory(clientStoragePath);
+        }
+    }
+
     public static void main(String[] args) throws Exception {
+        init();
         CountDownLatch connectionOpened = new CountDownLatch(1);
-        new Thread(() -> Network.getInstance().start(connectionOpened)).start();
+        new Thread(() -> Network.getInstance().start(connectionOpened, "localhost", 8189)).start();
         connectionOpened.await();
 
         Scanner sc = new Scanner(System.in);
@@ -27,7 +38,7 @@ public class ClientApp {
             }
             if (cmd.startsWith("/send ")) {
                 String filename = cmd.split("\\s")[1];
-                Path filePath = Paths.get("client_repository", filename);
+                Path filePath = Paths.get(CLIENT_STORAGE_PATH, filename);
                 if (!Files.exists(filePath)) {
                     System.out.println("Файл для отправки не найден в репозитории");
                     continue;
